@@ -1,4 +1,4 @@
-# excel2t
+# excel2txt
 A golang command-line tool to transfer excel to plain txt
 
 
