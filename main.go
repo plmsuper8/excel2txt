@@ -1,17 +1,4 @@
 // test_excel project main.go
-// author: plmsuper8
-/*
-This CLT program transfer excel to plain txt.
-	Support .xlsx on all platform, and .xls on windows (maybe buggy).
-	So far, only extract Sheet1.
-	working list:
-		Done!.support both XLS and XLSX
-		Done!.support flag (see -help)
-		Done!.fix utf8 on windows by adding BOM head (-bom)
-		Done!.Check xls binary head <D0 CF 11 E0 A1 B1 1A E1>
-		.Multi-threads, only print finished file
-		.flag sheet id, cols, rows etc.
-*/
 
 package main
 
