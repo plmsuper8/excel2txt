@@ -9,9 +9,10 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
-
-	"github.com/Luxurioust/excelize"
+	//"github.com/Luxurioust/excelize"
+	"github.com/360EntSecGroup-Skylar/excelize"
 	"github.com/aswjh/excel"
+	//"excel"
 )
 
 const (
@@ -25,15 +26,15 @@ var (
 	optxls  excel.Option = excel.Option{
 		"Visible":       false,
 		"DisplayAlerts": true,
-		"Readonly":      true}
+		"Readonly":      true,
+	}
 )
 
 func init() {
 	//read flags
 	flag.StringVar(&dirname, "dirname", "./", "the target directory or xlsx file")
 	flag.StringVar(&isep, "sep", "\t", "seperator of output")
-	flag.BoolVar(&isbom, "bom", false, `add byte sequence <EF BB BF> in head
-		of utf8 file. Required by Microsoft, but not for Linux`)
+	flag.BoolVar(&isbom, "bom", false, "add byte sequence <EF BB BF> in head of utf8 file. Required for reading by Microsoft Office.")
 	flag.Parse()
 }
 
@@ -59,7 +60,7 @@ func main() {
 			if ism, _ := regexp.MatchString(".xlsx$", fname); ism == true {
 				printXLSX(fname)
 			} else if ism, _ := regexp.MatchString(".xls$", fname); ism == true {
-				printXLS(fname)
+				printXLSX(fname)
 			} else {
 				fmt.Println("#Not Excel:", fname)
 			}
@@ -67,7 +68,12 @@ func main() {
 	} else if ism, _ := regexp.MatchString(".xlsx$", dirname); ism == true {
 		printXLSX(dirname)
 	} else if ism, _ := regexp.MatchString(".xls$", dirname); ism == true {
-		printXLS(dirname)
+		if runtime.GOOS == "windows" {
+			printXLS(dirname)
+		} else {
+			fmt.Println("#XLS support @ linux has been dropped:", dirname)
+			//import "github.com/extrame/xls" //consider this to replace aswjh/excel
+		}
 	}
 	/*DEBUG: wait to exit
 	fmt.Println("#Scan finished! Return to exit...")
@@ -78,18 +84,24 @@ func main() {
 }
 
 func printXLSX(f string) (res int) {
-	fmt.Println("#Excel:", f)
+	fmt.Println("#Excel Start:", f)
 	xlsx, err := excelize.OpenFile(f)
 	check(err)
-	//xlsx.SetActiveSheet(1)
-	rows := xlsx.GetRows("Sheet1")
-	for _, row := range rows {
-		for _, colCell := range row {
-			fmt.Print(colCell, isep)
+	//
+	for _, sname := range xlsx.GetSheetMap() {
+		fmt.Println("#Sheet Start:", sname)
+		rows := xlsx.GetRows(sname)
+		for _, row := range rows {
+			for _, colCell := range row {
+				fmt.Print(colCell, isep)
+			}
+			fmt.Print(IRETURN)
 		}
-		fmt.Print(IRETURN)
+		fmt.Println("#Sheet End:", sname)
 	}
-	fmt.Println("#Excel End:", f)
+	//xlsx.SetActiveSheet(1)
+	//rows := xlsx.GetRows("Sheet1")
+	fmt.Println("#Excel End:", f, "\n")
 	return 0
 }
 

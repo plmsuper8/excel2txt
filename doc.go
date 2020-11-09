@@ -6,6 +6,8 @@ This CLT program transfer excel to plain txt.
 	Support .xlsx on all platform, and .xls on windows (maybe buggy).
 	So far, only extract Sheet1.
 	working list:
+		2020/11/5	UPD: print all sheets instead of first one
+		2020/11/5	UPD: drop xls support, cuz old package failed to build.
 		Done!.support both XLS and XLSX
 		Done!.support flag (see -help)
 		Done!.fix utf8 on windows by adding BOM head (-bom)
